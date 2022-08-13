@@ -1,5 +1,6 @@
 package ru.netology.web;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,10 +23,10 @@ class AppOrderTest {
     private WebDriver driver;
 
     @BeforeAll
-    //static void setUpAll() {System.setProperty("webdriver.chrome.driver", "./driver/win/chromedriver.exe");}
-    static void setUpAll() {
-        System.setProperty("webdriver.chrome.driver", "driver/linux/chromedriver");
+    static void setupAll() {
+        WebDriverManager.chromedriver().setup();
     }
+
     @BeforeEach
     void setUp() {
         ChromeOptions options = new ChromeOptions();
