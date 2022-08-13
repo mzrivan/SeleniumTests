@@ -1,1 +1,1 @@
-# API-CI [![Build status](https://ci.appveyor.com/api/projects/status/1ua40i539lq1poyt?svg=true)](https://ci.appveyor.com/project/mzrivan/api-ci)
+# SeleniumTests [![Build status](https://ci.appveyor.com/api/projects/status/rmf0t7q8vxgeymrf?svg=true)](https://ci.appveyor.com/project/mzrivan/seleniumtests)
