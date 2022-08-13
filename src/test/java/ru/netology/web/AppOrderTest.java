@@ -58,7 +58,7 @@ class AppOrderTest {
     @CsvSource({"Vasiliy",
                 "1111111",
                 "@#$%!",
-            //"Василий" //Верный вариант для првоерки теста
+                "Василий" //Верный вариант для првоерки теста
 
     })
     void WrongName(String name) {
@@ -81,7 +81,7 @@ class AppOrderTest {
             "71234567891",
             "712345678912",
             "+7123456789Ы",
-            //"+71234567891" //Верный вариант для проверки теста
+            "+71234567891" //Верный вариант для проверки теста
     })
     void WrongPhone(String phone) {
         driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Василий");
