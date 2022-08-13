@@ -22,10 +22,10 @@ class AppOrderTest {
     private WebDriver driver;
 
     @BeforeAll
+    //static void setUpAll() {System.setProperty("webdriver.chrome.driver", "./driver/win/chromedriver.exe");}
     static void setUpAll() {
-        System.setProperty("webdriver.chrome.driver", "./driver/win/chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "./driver/linux/chromedriver.exe");
     }
-
     @BeforeEach
     void setUp() {
         ChromeOptions options = new ChromeOptions();
