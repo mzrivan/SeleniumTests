@@ -9,15 +9,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 
 class AppOrderTest {
     private WebDriver driver;
@@ -34,7 +31,6 @@ class AppOrderTest {
         options.addArguments("--no-sandbox");
         options.addArguments("--headless");
         driver = new ChromeDriver(options);
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         driver.get("http://localhost:9999");
     }
 
@@ -45,8 +41,8 @@ class AppOrderTest {
     }
 
     @Test
-    void PositiveTest() {
-        driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Василий Суворов");
+    void shouldSuccessfulOrder() {
+        driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Василий Суворов-Петров");
         driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+79990000000");
         driver.findElement(By.cssSelector("[data-test-id=agreement] span")).click();
         driver.findElement(By.cssSelector("button")).click();
@@ -61,14 +57,24 @@ class AppOrderTest {
                 //"Василий" //Верный вариант для првоерки теста
 
     })
-    void WrongName(String name) {
+    void shouldFailureOrderWithWrongName(String name) {
         driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys(name);
         driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+79990000000");
         driver.findElement(By.cssSelector("[data-test-id=agreement] span")).click();
         driver.findElement(By.cssSelector("button")).click();
-        List<WebElement> elements = driver.findElements(By.cssSelector("[data-test-id=name].input_invalid"));
-        assertNotNull(elements.get(0)); //Тест пройден, если найден спан с сообщением о неверном значении поля
-           }
+        String text = driver.findElement(By.cssSelector("[data-test-id=name] .input__sub")).getText();
+        assertEquals("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы.", text.trim());
+    }
+
+    @Test
+    void shouldFailureOrderWithEmptyName() {
+        driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("");
+        driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+79990000000");
+        driver.findElement(By.cssSelector("[data-test-id=agreement] span")).click();
+        driver.findElement(By.cssSelector("button")).click();
+        String text = driver.findElement(By.cssSelector("[data-test-id=name] .input__sub")).getText();
+        assertEquals("Поле обязательно для заполнения", text.trim());
+    }
 
     @ParameterizedTest
     @CsvSource({
@@ -83,13 +89,30 @@ class AppOrderTest {
             "+7123456789Ы",
             //"+71234567891" //Верный вариант для проверки теста
     })
-    void WrongPhone(String phone) {
+    void shouldFailureOrderWithWrongPhone(String phone) {
         driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Василий");
         driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys(phone);
         driver.findElement(By.cssSelector("[data-test-id=agreement] span")).click();
         driver.findElement(By.cssSelector("button")).click();
-        List<WebElement> elements = driver.findElements(By.cssSelector("[data-test-id=phone].input_invalid"));
-        assertNotNull(elements.get(0)); //Тест пройден, если найден спан с сообщением о неверном значении поля
+        String text = driver.findElement(By.cssSelector("[data-test-id=phone] .input__sub")).getText();
+        assertEquals("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.", text.trim());
+    }
+    @Test
+    void shouldFailureOrderWithEmptyPhone() {
+        driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Василий");
+        driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("");
+        driver.findElement(By.cssSelector("[data-test-id=agreement] span")).click();
+        driver.findElement(By.cssSelector("button")).click();
+        String text = driver.findElement(By.cssSelector("[data-test-id=phone] .input__sub")).getText();
+        assertEquals("Поле обязательно для заполнения", text.trim());
+    }
+    @Test
+    void shouldFailureOrderWithNotAgreement() {
+        driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Василий Суворов-Петров");
+        driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+79990000000");
+        driver.findElement(By.cssSelector("button")).click();
+        String text = driver.findElement(By.cssSelector(".input_invalid[data-test-id=agreement] .checkbox__text")).getText();
+        assertEquals("Я соглашаюсь с условиями обработки и использования моих персональных данных и разрешаю сделать запрос в бюро кредитных историй", text.trim());
     }
 }
 
